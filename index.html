@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0b0d10" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="screen-orientation" content="landscape" />
+  <title>Shattered Oath</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="rotate-warning" aria-hidden="true">
+    <div class="rotate-card">
+      <div class="rotate-icon">↻</div>
+      <strong>Gire o celular</strong>
+      <span>Shattered Oath foi feito para jogar na horizontal.</span>
+    </div>
+  </div>
+  <main id="game-shell">
+    <div id="game"></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
