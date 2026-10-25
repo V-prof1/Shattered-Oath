@@ -1,6 +1,6 @@
 export class InventorySystem {
-  constructor() {
-    this.items = new Map();
+  constructor(initialItems = {}) {
+    this.items = new Map(Object.entries(initialItems));
   }
 
   add(itemId, amount = 1) {
