@@ -12,6 +12,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.transitioningToHub = false;
+    this.joystickPointerId = null;
+    this.moveVector.set(0, 0);
+
     const save = SaveSystem.load();
     this.inventory = new InventorySystem(save.inventory);
     this.masteries = new MasterySystem(save.masteries, save.skillPoints);
