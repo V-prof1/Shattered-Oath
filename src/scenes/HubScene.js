@@ -8,6 +8,9 @@ export class HubScene extends Phaser.Scene {
   }
 
   create() {
+    this.transitioning = false;
+    this.joystickPointerId = null;
+    this.moveVector.set(0, 0);
     this.physics.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
     this.createCitadel();
     this.createPlayer();
