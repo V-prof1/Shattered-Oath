@@ -1,4 +1,5 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from './config.js';
+import { HubScene } from './scenes/HubScene.js';
 import { GameScene } from './scenes/GameScene.js';
 
 const config = {
@@ -12,9 +13,7 @@ const config = {
   antialias: false,
   physics: {
     default: 'arcade',
-    arcade: {
-      debug: false
-    }
+    arcade: { debug: false }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -22,10 +21,8 @@ const config = {
     width: GAME_WIDTH,
     height: GAME_HEIGHT
   },
-  input: {
-    activePointers: 4
-  },
-  scene: [GameScene]
+  input: { activePointers: 5 },
+  scene: [HubScene, GameScene]
 };
 
 new Phaser.Game(config);
