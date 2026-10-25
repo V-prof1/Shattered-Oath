@@ -1,15 +1,13 @@
 const BASE_REQUIREMENT = 20;
 
 export class MasterySystem {
-  constructor() {
-    this.masteries = new Map();
-    this.skillPoints = 0;
+  constructor(initialMasteries = {}, skillPoints = 0) {
+    this.masteries = new Map(Object.entries(initialMasteries));
+    this.skillPoints = skillPoints;
   }
 
   ensure(id) {
-    if (!this.masteries.has(id)) {
-      this.masteries.set(id, { level: 1, xp: 0 });
-    }
+    if (!this.masteries.has(id)) this.masteries.set(id, { level: 1, xp: 0 });
     return this.masteries.get(id);
   }
 
@@ -34,5 +32,12 @@ export class MasterySystem {
 
   get(id) {
     return { ...this.ensure(id) };
+  }
+
+  snapshot() {
+    return {
+      masteries: Object.fromEntries(this.masteries.entries()),
+      skillPoints: this.skillPoints
+    };
   }
 }
