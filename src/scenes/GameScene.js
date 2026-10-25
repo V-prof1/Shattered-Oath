@@ -2,6 +2,7 @@ import { GAME_WIDTH, GAME_HEIGHT, WORLD_WIDTH, WORLD_HEIGHT, COLORS, PLAYER } fr
 import { ENEMIES, rollDrops } from '../data/enemies.js';
 import { InventorySystem } from '../systems/InventorySystem.js';
 import { MasterySystem } from '../systems/MasterySystem.js';
+import { SaveSystem } from '../systems/SaveSystem.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -11,8 +12,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.inventory = new InventorySystem();
-    this.masteries = new MasterySystem();
+    const save = SaveSystem.load();
+    this.inventory = new InventorySystem(save.inventory);
+    this.masteries = new MasterySystem(save.masteries, save.skillPoints);
     this.masteries.ensure('melee');
     this.masteries.ensure('parry');
 
@@ -40,6 +42,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.enemies);
     this.physics.add.overlap(this.player, this.enemies, this.onEnemyContact, null, this);
     this.physics.add.overlap(this.player, this.drops, this.collectDrop, null, this);
+    this.physics.add.overlap(this.player, this.returnPortalZone, this.returnToHub, null, this);
 
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
@@ -73,6 +76,11 @@ export class GameScene extends Phaser.Scene {
     this.add.text(1390, 220, 'TRILHA DO NORTE', {
       fontFamily: 'monospace', fontSize: '18px', color: '#c9c0ae'
     });
+
+    this.add.ellipse(350, 880, 82, 112, 0x30333a, 0.9).setStrokeStyle(5, 0x7f8791, 0.7);
+    this.add.text(350, 952, 'CIDADELA', { fontFamily: 'monospace', fontSize: '12px', color: '#b9c0c7' }).setOrigin(0.5);
+    this.returnPortalZone = this.add.zone(350, 880, 72, 102);
+    this.physics.add.existing(this.returnPortalZone, true);
   }
 
   makeTreeClusters() {
@@ -303,6 +311,7 @@ export class GameScene extends Phaser.Scene {
     dropObject.destroy();
     this.showAction(`+${drop.amount} ${drop.name}`);
     this.updateHud();
+    this.saveProgress();
   }
 
   startParry() {
@@ -364,6 +373,24 @@ export class GameScene extends Phaser.Scene {
     const result = this.masteries.addProgress(id, amount);
     if (result.levelsGained > 0) this.showAction(`${id.toUpperCase()} subiu para ${result.level} — +${result.levelsGained} ponto de habilidade`);
     this.updateHud();
+    this.saveProgress();
+  }
+
+  saveProgress() {
+    const mastery = this.masteries.snapshot();
+    SaveSystem.save({
+      inventory: this.inventory.snapshot(),
+      masteries: mastery.masteries,
+      skillPoints: mastery.skillPoints
+    });
+  }
+
+  returnToHub() {
+    if (this.transitioningToHub) return;
+    this.transitioningToHub = true;
+    this.saveProgress();
+    this.cameras.main.fadeOut(220, 10, 13, 16);
+    this.time.delayedCall(230, () => this.scene.start('HubScene'));
   }
 
   updateHud() {
